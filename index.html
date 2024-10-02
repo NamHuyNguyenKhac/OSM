@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive OSM Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 900px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Map with OpenStreetMap</h1>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([21.028, 105.804], 15);  // View of HaNoi
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add a marker
+        var marker = L.marker([21.028, 105.804]).addTo(map)
+            .bindPopup('Trung Tâm Hà Nội')
+            .openPopup();
+
+        // Event to add a new marker by clicking on the map
+        function onMapClick(e) {
+            L.marker(e.latlng).addTo(map)
+                .bindPopup('New marker at ' + e.latlng.toString())
+                .openPopup();
+        }
+
+        map.on('click', onMapClick);
+    </script>
+</body>
+</html>
