@@ -61,39 +61,17 @@
         });
 
 
+        /*
         // Event to add a new marker by clicking on the map
         function onMapClick(e) {
             L.marker(e.latlng).addTo(map)
                 .bindPopup('New marker at ' + e.latlng.toString())
                 .openPopup();
         }
-
+        
         map.on('click', onMapClick);
-
-        // Fetch parks from the database and display them on the map
-        fetch('/get_parks')
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(park => {
-                    var geoJson = JSON.parse(park[0]);
-                    var coordinates = geoJson.coordinates[0];
-                    var latLngs = coordinates.map(coord => [coord[1], coord[0]]);
-                    L.polygon(latLngs).addTo(map)
-                        .bindPopup("Park");
-                });
-            });
-
-        // Fetch live data from the Overpass API
-        fetch('/fetch_parks')
-            .then(response => response.json())
-            .then(data => {
-                data.elements.forEach(park => {
-                    var lat = park.lat;
-                    var lon = park.lon;
-                    L.marker([lat, lon]).addTo(map)
-                        .bindPopup("Park from Overpass API");
-                });
-            });
+*/
+        
     </script>
 </body>
 </html>
