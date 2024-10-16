@@ -1,77 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <title>OSM</title>
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OSM Based</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         #map {
             height: 900px;
             width: 100%;
         }
+        #csvDataTable {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <h1>Bản đồ</h1>
-    <div id="map"></div>
+    <!-- Button to navigate to the CSV Data Page -->
+    <a href="/data" class="btn btn-primary mb-3">View CSV Data</a>
+
+    <!-- Map Section -->
+    <div id="mapSection">
+        <h2>Bản đồ thuê trọ HN</h2>
+        <div id="map"></div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel">Chi tiết</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h4 id="locationName"></h4>
+                    <p><strong>Địa chỉ:</strong> <span id="locationAddress"></span></p>
+                    <p><strong>Phòng ngủ:</strong> <span id="locationBedroom"></span></p>
+                    <p><strong>WC:</strong> <span id="locationBathroom"></span></p>
+                    <p><strong>Giá:</strong> <span id="locationPrice"></span> Triệu Đồng</p>
+                    <p><strong>Mô tả:</strong> <span id="locationDescription"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Table Section for CSV Data -->
+    <div id="csvDataTable">
+        <h2>CSV Data List</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Coordinates</th>
+                    <th>Address</th>
+                    <th>Bedrooms</th>
+                    <th>Bathrooms</th>
+                    <th>Price (USD)</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody id="csvDataBody">
+                <!-- Data rows will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script>
-        // Initialize the map
-        var map = L.map('map').setView([21.028, 105.804], 15);  // View of HaNoi
-
-        // Add OpenStreetMap tiles
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        // Add a marker
-        var marker = L.marker([21.028, 105.804]).addTo(map)
-            .bindPopup('Trung Tâm Hà Nội')
-            .openPopup();
-        
-        // Add data about houses
-        // Fetch location data from the backend
-        fetch('/locations')
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(location => {
-                    var marker = L.marker([location.latitude, location.longitude]).addTo(map);
-                    marker.bindPopup(`<b>${location.title}</b>`);
-                });
-            });
-        
-        // Parse the CSV file using PapaParse
-        Papa.parse('data_bds_total.csv', {
-            download: true,
-            header: true,
-            complete: function(results) {
-                results.data.forEach(function(location) {
-                    // Split the 'coor' column to get latitude and longitude
-                    var coords = location.coor.split(' ');
-                    var latitude = parseFloat(coords[0]);
-                    var longitude = parseFloat(coords[1]);
-                    
-                    var marker = L.marker([latitude, longitude]).addTo(map);
-                    marker.bindPopup(`<b>${location.title}</b>`);
-                });
-            }
-        });
-
-
-        /*
-        // Event to add a new marker by clicking on the map
-        function onMapClick(e) {
-            L.marker(e.latlng).addTo(map)
-                .bindPopup('New marker at ' + e.latlng.toString())
-                .openPopup();
-        }
-        
-        map.on('click', onMapClick);
-*/
-        
-    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="static/script.js"></script>
 </body>
 </html>
