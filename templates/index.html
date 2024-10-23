@@ -8,7 +8,7 @@
     <style>
         /* Set the height of the map */
         #map {
-            height: 900px;
+            height: 910px;
             width: 100%;
         }
 
@@ -64,6 +64,33 @@
                 "Description: " + marker.description
             );
         });
+
+         // Custom icon for user's location
+         var userIcon = L.icon({
+            iconUrl: '/static/images/man.png',
+            iconSize: [40, 40],  // Adjust the size of the marker as needed
+            iconAnchor: [20, 40],  // Anchor the icon (half width and full height for proper positioning)
+            popupAnchor: [0, -40]  // Position the popup relative to the icon
+        });
+
+        // Get the user's current location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var userLat = position.coords.latitude;
+                var userLon = position.coords.longitude;
+
+                // Create a marker for the user's location with the custom icon
+                var userMarker = L.marker([userLat, userLon], { icon: userIcon }).addTo(map);
+                userMarker.bindPopup("<b>Bạn đang ở đây!</b>").openPopup();
+
+                // Center the map on the user's location
+                map.setView([userLat, userLon], 13);
+            }, function(error) {
+                console.log("Geolocation error: " + error.message);
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
     </script>
 </body>
 </html>
