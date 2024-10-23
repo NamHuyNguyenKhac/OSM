@@ -18,6 +18,7 @@
         }
         th {
             background-color: #f2f2f2;
+            cursor: pointer;
         }
         .btn {
             display: inline-block;
@@ -32,6 +33,12 @@
             float: right;
             margin-left: -50%;
         }
+        input[type="text"] {
+            padding: 10px 0px;
+            margin-bottom: 20px;
+            width: 100%;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -42,16 +49,22 @@
         </h1>
     </div>
 
-    <table>
-        <tr>
-            <th>Title</th>
-            <th>Area (m²)</th>
-            <th>Bedrooms</th>
-            <th>Bathrooms</th>
-            <th>Price</th>
-            <th>Description</th>
-            <th>Coordinates</th>
-        </tr>
+    <!-- Search box -->
+    <input type="text" id="searchInput" placeholder="Tìm kiếm thông tin" onkeyup="searchTable()">
+
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">Title</th>
+                <th onclick="sortTable(1)">Area (m²)</th>
+                <th onclick="sortTable(2)">Bedrooms</th>
+                <th onclick="sortTable(3)">Bathrooms</th>
+                <th onclick="sortTable(4)">Price</th>
+                <th>Description</th>
+                <th>Coordinates</th>
+            </tr>
+        </thead>
+        <tbody>
         {% for marker in markers %}
         <tr>
             <td>{{ marker.title }}</td>
@@ -63,6 +76,74 @@
             <td>{{ marker.latitude }}, {{ marker.longitude }}</td>
         </tr>
         {% endfor %}
+        </tbody>
     </table>
+
+    <script>
+        // Function to search the table
+        function searchTable() {
+            var input, filter, table, tr, td, i, j, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toLowerCase();
+            table = document.getElementById("dataTable");
+            tr = table.getElementsByTagName("tr");
+
+            for (i = 1; i < tr.length; i++) {  // Skip the first row (header)
+                tr[i].style.display = "none";  // Hide the row initially
+                td = tr[i].getElementsByTagName("td");
+                for (j = 0; j < td.length; j++) {  // Loop through all the table columns
+                    if (td[j]) {
+                        txtValue = td[j].textContent || td[j].innerText;
+                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";  // Show the row if match is found
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Function to sort the table by clicking on the header
+        function sortTable(n) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchCount = 0;
+            table = document.getElementById("dataTable");
+            switching = true;
+            dir = "asc";  // Set the sorting direction to ascending initially
+
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+
+                for (i = 1; i < (rows.length - 1); i++) {  // Skip the header row
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("td")[n];
+                    y = rows[i + 1].getElementsByTagName("td")[n];
+
+                    if (dir === "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir === "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchCount++;
+                } else {
+                    if (switchCount === 0 && dir === "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+    </script>
 </body>
 </html>
