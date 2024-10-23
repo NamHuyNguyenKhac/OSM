@@ -3,113 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marker Data List</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <title>Property Data</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .btn {
+            display: inline-block;
+            padding: 5px 50px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            float: right;
+            margin-left: -50%;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Markers Data List</h2>
-        <input type="text" id="searchInput" class="form-control" placeholder="Search by address...">
-        <table class="table table-bordered mt-2" id="markersTable">
-            <thead>
-                <tr>
-                    <th onclick="sortTable(0)">Name</th>
-                    <th onclick="sortTable(1)">Coordinates</th>
-                    <th onclick="sortTable(2)">Address</th>
-                    <th onclick="sortTable(3)">Bedrooms</th>
-                    <th onclick="sortTable(4)">Bathrooms</th>
-                    <th onclick="sortTable(5)">Price (USD)</th>
-                    <th onclick="sortTable(6)">Description</th>
-                </tr>
-            </thead>
-            <tbody id="markersBody">
-                <!-- Data rows will be dynamically inserted here -->
-            </tbody>
-        </table>
-        <nav aria-label="Page navigation">
-            <ul class="pagination" id="pagination"></ul>
-        </nav>
+    <div>
+        <h1>Danh sách trọ
+        <!-- Button to redirect to the data page -->   
+        <a href="/" class="btn">Map</a>
+        </h1>
     </div>
 
-    <script>
-        let markersData = [];
-        const rowsPerPage = 5;
-        let currentPage = 1;
-
-        $(document).ready(function() {
-            fetchMarkers();
-
-            // Search functionality
-            $('#searchInput').on('input', function() {
-                currentPage = 1; // Reset to the first page on search
-                renderTable();
-            });
-        });
-
-        function fetchMarkers() {
-            $.getJSON('/get_markers', function(data) {
-                markersData = data;
-                renderTable();
-            });
-        }
-
-        function renderTable() {
-            const searchValue = $('#searchInput').val().toLowerCase();
-            const filteredData = markersData.filter(row => {
-                return row.address.toLowerCase().includes(searchValue);
-            });
-            const totalRows = filteredData.length;
-            const totalPages = Math.ceil(totalRows / rowsPerPage);
-            const startRow = (currentPage - 1) * rowsPerPage;
-            const endRow = startRow + rowsPerPage;
-            const paginatedData = filteredData.slice(startRow, endRow);
-
-            const markersBody = $('#markersBody');
-            markersBody.empty();
-            paginatedData.forEach(row => {
-                markersBody.append(`
-                    <tr>
-                        <td>${row.name}</td>
-                        <td>${row.coordinates}</td>
-                        <td>${row.address}</td>
-                        <td>${row.bedroom}</td>
-                        <td>${row.bathroom}</td>
-                        <td>${row.price}</td>
-                        <td>${row.description}</td>
-                    </tr>
-                `);
-            });
-
-            renderPagination(totalRows, totalPages);
-        }
-
-        function renderPagination(totalRows, totalPages) {
-            const pagination = $('#pagination');
-            pagination.empty();
-
-            for (let i = 1; i <= totalPages; i++) {
-                pagination.append(`
-                    <li class="page-item ${currentPage === i ? 'active' : ''}">
-                        <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
-                    </li>
-                `);
-            }
-        }
-
-        function changePage(page) {
-            currentPage = page;
-            renderTable();
-        }
-
-        function sortTable(columnIndex) {
-            markersData.sort((a, b) => {
-                const aValue = Object.values(a)[columnIndex].toString();
-                const bValue = Object.values(b)[columnIndex].toString();
-                return aValue.localeCompare(bValue);
-            });
-            renderTable();
-        }
-    </script>
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Area (m²)</th>
+            <th>Bedrooms</th>
+            <th>Bathrooms</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>Coordinates</th>
+        </tr>
+        {% for marker in markers %}
+        <tr>
+            <td>{{ marker.title }}</td>
+            <td>{{ marker.area }}</td>
+            <td>{{ marker.bedroom }}</td>
+            <td>{{ marker.bathroom }}</td>
+            <td>{{ marker.price }}</td>
+            <td>{{ marker.description }}</td>
+            <td>{{ marker.latitude }}, {{ marker.longitude }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>

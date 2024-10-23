@@ -28,6 +28,10 @@ def home():
     markers = read_csv('data_bds_total.csv')  # Adjust the file path as needed
     return render_template('index.html', markers=markers)
 
+@app.route('/data')
+def data_page():
+    markers = read_csv('data_bds_total.csv')
+    return render_template('data.html', markers=markers)
 
 if __name__ == '__main__':
     app.run(debug=True)
